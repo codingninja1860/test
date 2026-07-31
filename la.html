@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>A Very Important Quiz 💗</title>
+<style>
+  :root{
+    --blush: #ffe9f1;
+    --petal: #ffb6d0;
+    --rose: #e8477e;
+    --rose-deep: #b9245a;
+    --cream: #fff8f2;
+    --plum: #5c2340;
+    --gold: #f2b545;
+    --shadow: rgba(185, 36, 90, 0.28);
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{
+    margin:0; padding:0; width:100%; min-height:100%;
+    font-family: 'Georgia', 'Iowan Old Style', 'Noto Sans Tamil', serif;
+    background: linear-gradient(160deg, var(--blush) 0%, var(--petal) 55%, var(--rose) 130%);
+    color: var(--plum);
+    overflow-x:hidden;
+  }
+  #stage{
+    position:relative;
+    width:100%;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 20px;
+    overflow:hidden;
+  }
+  .bg-petal{
+    position:absolute;
+    top:-40px;
+    font-size: 22px;
+    opacity:0.5;
+    animation: drift linear infinite;
+    pointer-events:none;
+  }
+  @keyframes drift{
+    0%{ transform: translateY(0) rotate(0deg); opacity:0; }
+    10%{ opacity:0.55; }
+    100%{ transform: translateY(110vh) rotate(300deg); opacity:0; }
+  }
+
+  .card{
+    position:relative;
+    background: rgba(255,255,255,0.86);
+    border-radius: 24px;
+    padding: clamp(28px, 6vw, 46px) clamp(20px, 6vw, 42px);
+    max-width: 560px;
+    width: 100%;
+    text-align:center;
+    box-shadow: 0 20px 50px var(--shadow);
+    border: 1px solid rgba(255,255,255,0.9);
+    z-index: 3;
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .eyebrow{
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-size: 0.7em;
+    color: var(--rose-deep);
+    font-family: 'Trebuchet MS', sans-serif;
+    font-weight:bold;
+    margin-bottom: 10px;
+  }
+
+  h1{
+    font-size: clamp(1.5em, 6vw, 2.1em);
+    margin: 0 0 14px 0;
+    color: var(--rose-deep);
+    font-weight: normal;
+    line-height:1.3;
+    word-wrap: break-word;
+  }
+
+  h1 .script{
+    font-family: 'Brush Script MT', cursive;
+    font-size: 1.15em;
+    color: var(--rose);
+  }
+
+  p.lead{
+    font-size: clamp(0.95em, 3vw, 1.05em);
+    line-height:1.6;
+    margin: 0 0 24px 0;
+    color: var(--plum);
+  }
+
+  input#name-field{
+    width: 85%;
+    max-width: 300px;
+    padding: 13px 20px;
+    border-radius: 40px;
+    border: 2px solid var(--petal);
+    font-size: 16px; /* prevents iOS zoom-on-focus */
+    text-align:center;
+    outline:none;
+    font-family: inherit;
+    color: var(--plum);
+    background: var(--cream);
+  }
+  input#name-field:focus{ border-color: var(--rose); }
+
+  button{
+    font-family: 'Trebuchet MS', sans-serif;
+    font-weight:bold;
+    font-size: clamp(0.95em, 3.2vw, 1.05em);
+    padding: 13px 28px;
+    border-radius: 40px;
+    border: none;
+    cursor:pointer;
+    background: linear-gradient(135deg, var(--rose), var(--rose-deep));
+    color: #fff;
+    box-shadow: 0 10px 22px var(--shadow);
+    transition: transform 0.15s ease;
+    margin: 8px 6px 0 6px;
+    touch-action: manipulation;
+    white-space: nowrap;
+  }
+  button:hover{ transform: translateY(-2px) scale(1.03); }
+  button:active{ transform: translateY(0) scale(0.97); }
+
+  button.ghost{
+    background: transparent;
+    color: var(--rose-deep);
+    border: 2px solid var(--petal);
+    box-shadow:none;
+  }
+
+  .hidden{ display:none !important; }
+
+  .step-track{
+    display:flex;
+    justify-content:center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .dot{
+    width: 8px; height:8px; border-radius:50%;
+    background: var(--petal);
+    transition: background 0.3s ease, transform 0.3s ease;
+    flex-shrink:0;
+  }
+  .dot.active{ background: var(--rose-deep); transform: scale(1.3); }
+  .dot.done{ background: var(--rose); }
+
+  .question-emoji{
+    font-size: clamp(38px, 10vw, 52px);
+    margin-bottom: 6px;
+    display:inline-block;
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{ transform: translateY(0) rotate(0deg); }
+    50%{ transform: translateY(-8px) rotate(-4deg); }
+  }
+
+  #answer-zone{
+    position:relative;
+    min-height: 150px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  #no-btn{
+    position: relative;
+    transition: top 0.18s ease, left 0.18s ease, transform 0.15s ease;
+  }
+
+  .taunt{
+    min-height: 40px;
+    font-size: clamp(0.85em, 3vw, 0.95em);
+    color: var(--rose-deep);
+    font-style: italic;
+    margin-top: 12px;
+    font-family: 'Trebuchet MS', sans-serif;
+    padding: 0 4px;
+    word-wrap: break-word;
+  }
+
+  .quote-block{
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: clamp(0.95em, 3.2vw, 1.15em);
+    line-height: 1.7;
+    color: var(--plum);
+    background: linear-gradient(180deg, #fff, var(--cream));
+    border-left: 3px solid var(--rose);
+    padding: 16px 18px;
+    border-radius: 4px 16px 16px 4px;
+    margin: 16px 0;
+    text-align:left;
+  }
+  .quote-block .sig{
+    display:block;
+    margin-top: 10px;
+    font-style: normal;
+    font-size: 0.85em;
+    color: var(--rose-deep);
+    text-align:right;
+  }
+
+  .letter{
+    text-align:left;
+    font-size: clamp(0.95em, 3vw, 1.05em);
+    line-height:1.75;
+    color: var(--plum);
+    margin: 16px 0 6px 0;
+  }
+
+  footer.credit{
+    position:absolute;
+    bottom: 8px;
+    left: 0;
+    right: 0;
+    width:100%;
+    text-align:center;
+    font-size: 0.7em;
+    color: rgba(92,35,64,0.55);
+    font-family: 'Trebuchet MS', sans-serif;
+    z-index: 2;
+    padding: 0 12px;
+  }
+
+  @media (max-width:600px){
+    #stage{ padding: 14px; }
+    .card{ padding: 26px 18px; border-radius: 20px; }
+    #answer-zone{ min-height: 170px; gap: 12px; }
+    footer.credit{ display:none; }
+  }
+
+  @media (max-height: 640px){
+    .card{ max-height: calc(100dvh - 20px); }
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg-petals"></div>
+
+  <!-- INTRO -->
+  <div class="card" id="intro-card">
+    <div class="eyebrow">A tiny questionnaire</div>
+    <h1>Hi <span class="script" id="greet-name">love</span>, before you scroll past —<br>I have a few questions.</h1>
+    <p class="lead">Just a handful of very serious, very official questions. Answer honestly. There is no wrong answer, actually there's only one right answer, but let's pretend it's a choice.</p>
+    <input id="name-field" type="text" placeholder="Type your name so it feels official...">
+    <br>
+    <button id="begin-btn">I'm ready 💗</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="card hidden" id="quiz-card">
+    <div class="step-track" id="step-track"></div>
+    <div class="question-emoji" id="q-emoji">💗</div>
+    <h1 id="q-text">Do you love me?</h1>
+    <div id="answer-zone">
+      <button id="yes-btn">Yes 💍</button>
+      <button id="no-btn" class="ghost">No</button>
+    </div>
+    <div class="taunt" id="taunt-text"></div>
+  </div>
+
+  <!-- FINALE -->
+  <div class="card hidden" id="finale-card">
+    <div class="eyebrow">Verdict</div>
+    <h1>Confirmed: you love me <span class="script">a lot.</span></h1>
+    <div class="letter">
+      Dear <b id="letter-name">love</b>,<br><br>
+      Turns out the quiz was rigged the whole time, because there was never really a "no" —
+      just like there's never really a version of my life where you're not in it. Since you're
+      clearly stuck with me, here are a few things I keep meaning to tell you:
+    </div>
+
+    <div class="quote-block">
+      You're the reason my phone battery dies by noon and I don't even mind.
+      <span class="sig">— a very biased boyfriend</span>
+    </div>
+    <div class="quote-block">
+      "Somewhere, between all my plans and all my chaos, you became my favorite constant."
+      <span class="sig">— written on a random Tuesday, thinking of <span id="quote-name-1">you</span></span>
+    </div>
+    <div class="quote-block">
+      If I had to pick one voice note to keep for the rest of my life, it'd be one of yours,
+      preferably the one where you're laughing at your own joke before you finish telling it.
+      <span class="sig">— also true</span>
+    </div>
+
+    <p class="lead" style="margin-top:6px;">
+      Happy Girlfriend Day, <span id="closing-name">love</span>. Thank you for putting up with me,
+      for the endless talks and messages, and for being the best part of every ordinary day. 💗
+    </p>
+    <button id="replay-btn" class="ghost">Take the quiz again</button>
+  </div>
+
+  <footer class="credit">made with 💗, mild bribery, and one very persistent "no" button</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const questions = [
+  { emoji: "💗", text: "Do you love me?" },
+  { emoji: "🍦", text: "Ice cream share pannuvia... illa full-ah sapduviya? 😏" },
+  { emoji: "🥺", text: "Evlo sanda potalum enna vittu pogama love pannuviya?" },
+  { emoji: "😘", text: "Daily enakku oru kiss mandatory... okay va? 💋" },
+  { emoji: "🤗", text: "Enakku daily oru hug kuduppiya? 🤍" },
+  { emoji: "💍", text: "Forever en kooda dhaan iruppiya? Escape option illa! ❤️🤭" },
+
+  ];
+
+  const tauntLines = [
+    "No ah? Chill ma... innum oru thadava try pannu 😜",
+    "'No' button-ku romba bayam... unna avoid pannudhu 😂",
+    "'Yes' dhaan destiny... 'No' ku chance eh illa ❤️",
+    "Evlo click pannalum 'No' work aagadhu... accept pannidu 😏",
+    "'No' button vida nee fast illa pola 🤭",
+    "Ippo idhu konjam scene aagudhu... 'Yes' click pannidu 😅",
+    "'No' solla try pannadha... adhu kooda agree pannala 😆",
+    "'No' button unna paatha odiduchu 🏃‍♂️💨",
+    "Universe-e 'Yes' solludhu... nee mattum yen 'No'? 😌",
+    "Seri seri... ivlo try pannitiya? 'Yes' dhaan final answer 😍"
+  ];
+
+  let currentQ = 0;
+  let name = "love";
+  let dodgeCount = 0;
+
+  const introCard = document.getElementById('intro-card');
+  const quizCard = document.getElementById('quiz-card');
+  const finaleCard = document.getElementById('finale-card');
+  const nameField = document.getElementById('name-field');
+  const greetName = document.getElementById('greet-name');
+  const stepTrack = document.getElementById('step-track');
+  const qEmoji = document.getElementById('q-emoji');
+  const qText = document.getElementById('q-text');
+  const noBtn = document.getElementById('no-btn');
+  const yesBtn = document.getElementById('yes-btn');
+  const answerZone = document.getElementById('answer-zone');
+  const tauntText = document.getElementById('taunt-text');
+  const letterName = document.getElementById('letter-name');
+  const quoteName1 = document.getElementById('quote-name-1');
+  const closingName = document.getElementById('closing-name');
+
+  function rand(min, max){ return Math.random() * (max - min) + min; }
+  function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+  // floating background petals
+  const petalSymbols = ['💗','🌸','💕','✨'];
+  function spawnPetal(){
+    const p = document.createElement('div');
+    p.className = 'bg-petal';
+    p.textContent = petalSymbols[Math.floor(rand(0, petalSymbols.length))];
+    p.style.left = rand(0,100) + 'vw';
+    p.style.fontSize = rand(14,28) + 'px';
+    const dur = rand(9,18);
+    p.style.animationDuration = dur + 's';
+    document.getElementById('bg-petals').appendChild(p);
+    setTimeout(()=>p.remove(), dur*1000 + 200);
+  }
+  setInterval(spawnPetal, 600);
+  for(let i=0;i<8;i++){ setTimeout(spawnPetal, i*250); }
+
+  function buildStepTrack(){
+    stepTrack.innerHTML = '';
+    questions.forEach((_, i)=>{
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === currentQ ? ' active' : i < currentQ ? ' done' : '');
+      stepTrack.appendChild(d);
+    });
+  }
+
+  function renderQuestion(){
+    buildStepTrack();
+    const q = questions[currentQ];
+    qEmoji.textContent = q.emoji;
+    qText.textContent = q.text;
+    tauntText.textContent = '';
+    dodgeCount = 0;
+    noBtn.style.position = 'static';
+    noBtn.style.left = '';
+    noBtn.style.top = '';
+    noBtn.textContent = 'No';
+    noBtn.onclick = null;
+  }
+
+  document.getElementById('begin-btn').addEventListener('click', ()=>{
+    const val = nameField.value.trim();
+    if(val.length > 0){
+      name = val;
+      greetName.textContent = val;
+      letterName.textContent = val;
+      quoteName1.textContent = val;
+      closingName.textContent = val;
+    }
+    introCard.classList.add('hidden');
+    quizCard.classList.remove('hidden');
+    currentQ = 0;
+    renderQuestion();
+  });
+
+  function dodge(){
+    if(dodgeCount >= tauntLines.length) return; // button has already surrendered
+    dodgeCount += 1;
+    const rect = answerZone.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+    const maxX = Math.max(0, rect.width - btnRect.width);
+    const maxY = Math.max(0, rect.height - btnRect.height);
+    noBtn.style.position = 'absolute';
+    noBtn.style.left = clamp(rand(0, maxX), 0, maxX) + 'px';
+    noBtn.style.top = clamp(rand(0, maxY), 0, maxY) + 'px';
+
+    const line = tauntLines[Math.min(dodgeCount - 1, tauntLines.length - 1)];
+    tauntText.textContent = line;
+
+    if(dodgeCount >= tauntLines.length){
+      noBtn.textContent = "Fine, YES 😩💗";
+      noBtn.onclick = advance;
+    }
+  }
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('click', dodge);
+  noBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); dodge(); }, {passive:false});
+
+  function advance(){
+    currentQ += 1;
+    if(currentQ >= questions.length){
+      quizCard.classList.add('hidden');
+      finaleCard.classList.remove('hidden');
+    } else {
+      answerZone.style.position = 'relative';
+      renderQuestion();
+    }
+  }
+
+  yesBtn.addEventListener('click', advance);
+
+  document.getElementById('replay-btn').addEventListener('click', ()=>{
+    finaleCard.classList.add('hidden');
+    currentQ = 0;
+    quizCard.classList.remove('hidden');
+    renderQuestion();
+  });
+
+})();
+</script>
+</body>
+</html>
