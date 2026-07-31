@@ -254,9 +254,9 @@
   <!-- INTRO -->
   <div class="card" id="intro-card">
     <div class="eyebrow">A tiny questionnaire</div>
-    <h1>Hi <span class="script" id="greet-name">love</span>, before you scroll past —<br>I have a few questions.</h1>
+    <h1>Hi <span class="script" id="greet-name">Aarthi</span>, before you scroll past —<br>I have a few questions.</h1>
     <p class="lead">Just a handful of very serious, very official questions. Answer honestly. There is no wrong answer, actually there's only one right answer, but let's pretend it's a choice.</p>
-    <input id="name-field" type="text" placeholder="Type your name so it feels official...">
+   <!--<input id="name-field" type="text" placeholder="Type your name so it feels official...">--> 
     <br>
     <button id="begin-btn">I'm ready 💗</button>
   </div>
@@ -305,7 +305,7 @@
     <button id="replay-btn" class="ghost">Take the quiz again</button>
   </div>
 
-  <footer class="credit">made with 💗, mild bribery, and one very persistent "no" button</footer>
+  <footer class="credit">made with 💗, mild bribery, and one very persistent "no" button, By Lakshmanan</footer>
 </div>
 
 <script>
@@ -336,13 +336,13 @@
   ];
 
   let currentQ = 0;
-  let name = "love";
+  const name = "Aarthi";
   let dodgeCount = 0;
 
   const introCard = document.getElementById('intro-card');
   const quizCard = document.getElementById('quiz-card');
   const finaleCard = document.getElementById('finale-card');
-  const nameField = document.getElementById('name-field');
+  //const nameField = document.getElementById('name-field');
   const greetName = document.getElementById('greet-name');
   const stepTrack = document.getElementById('step-track');
   const qEmoji = document.getElementById('q-emoji');
@@ -397,20 +397,18 @@
     noBtn.onclick = null;
   }
 
-  document.getElementById('begin-btn').addEventListener('click', ()=>{
-    const val = nameField.value.trim();
-    if(val.length > 0){
-      name = val;
-      greetName.textContent = val;
-      letterName.textContent = val;
-      quoteName1.textContent = val;
-      closingName.textContent = val;
-    }
+// Set hardcoded name everywhere
+greetName.textContent = name;
+letterName.textContent = name;
+quoteName1.textContent = name;
+closingName.textContent = name;
+
+document.getElementById('begin-btn').addEventListener('click', () => {
     introCard.classList.add('hidden');
     quizCard.classList.remove('hidden');
     currentQ = 0;
     renderQuestion();
-  });
+});
 
   function dodge(){
     if(dodgeCount >= tauntLines.length) return; // button has already surrendered
